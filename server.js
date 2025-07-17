@@ -1,6 +1,7 @@
 'use strict';
 require('dotenv').config();
 const express     = require('express');
+const helmet = require('helmet');
 const bodyParser  = require('body-parser');
 const cors        = require('cors');
 
@@ -9,6 +10,21 @@ const fccTestingRoutes  = require('./routes/fcctesting.js');
 const runner            = require('./test-runner');
 
 const app = express();
+
+app.use(helmet({
+  contentSecurityPolicy: {
+    useDefaults: true,
+    directives: {
+      "default-src": ["'self'"],
+      "script-src": ["'self'"],
+      "style-src": ["'self'"]
+    }
+  },
+  referrerPolicy: { policy: 'same-origin' },
+  frameguard: { action: 'deny' },  // Prevent clickjacking
+  dnsPrefetchControl: { allow: false },
+  hidePoweredBy: true
+}));
 
 app.use('/public', express.static(process.cwd() + '/public'));
 
